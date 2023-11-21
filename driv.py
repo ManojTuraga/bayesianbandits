@@ -3,12 +3,15 @@ from scipy.integrate import odeint
 from L63 import L63
 import matplotlib.pyplot as plt
 
+# equivalent to the driv96.m file
+
 # Initialization
 n = 3  # Dimension of state space
 m = 1  # Dimension of observation space
 N = 10  # Number of ensemble members
-H = np.zeros((m, n))
+H = np.zeros((m, n)) # Opservation matrix
 H[0, 1] = 1  # Observe y
+
 dt = 0.1  # Time between observations
 J = 10000  # Number of assimilation times
 vt = np.zeros((n, J + 1))
@@ -56,15 +59,20 @@ for j in range(J):
     Innov = yt[:, j + 1] - np.dot(H, Vharr) + alpha * np.random.randn(N)
     SinvI = np.linalg.solve(S, Innov)
 
+    # Kalman Gain
     KI = np.dot(np.dot(Chat, H.T), SinvI)
+
+    # Update Ensembles
     Varr = Vharr + KI
 
     # Sample mean of the Analysis
     mVarr = np.mean(Varr, axis=1)
+
+    # Calculate RMSE
     RMSE[j] = np.linalg.norm(mVarr - vt[:, j + 1]) / np.sqrt(n)
 
-# Plot RMSE
 
+# Plot RMSE
 plt.figure()
 plt.plot(range(1, J + 1), RMSE)
 plt.axhline(alpha, color='g', linestyle='-')

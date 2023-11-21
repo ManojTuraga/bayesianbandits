@@ -1,15 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.integrate import odeint
-
-def L63(x, t):
-    sigma = 10
-    rho = 28
-    beta = 8/3
-    xdot = [sigma*x[1] - sigma*x[0],
-            x[0]*rho - x[0]*x[2] - x[1],
-            x[0]*x[1] - beta*x[2]]
-    return xdot
+from L63 import L63
 
 Tspan = np.array([0, 50])
 v0 = np.array([1, 0, 0])

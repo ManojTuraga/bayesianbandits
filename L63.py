@@ -1,9 +1,11 @@
 import numpy as np
 
 def L63(x, t):
-    xdot = np.array([
-        10 * x[1] - 10 * x[0],
-        x[0] * 28 - x[0] * x[2] - x[1],
-        x[0] * x[1] - 8/3 * x[2]
-    ])
+    # Evaluates the right hand side of the Lorenz '96 system
+    sigma = 10
+    rho = 28
+    beta = 8/3
+    xdot = [sigma*x[1] - sigma*x[0],
+            x[0]*rho - x[0]*x[2] - x[1],
+            x[0]*x[1] - beta*x[2]]
     return xdot
