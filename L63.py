@@ -1,7 +1,7 @@
 import numpy as np
 
 def L63(x, t):
-    # Evaluates the right hand side of the Lorenz '96 system
+    # Evaluates the right hand side of the Lorenz '93 system
     sigma = 10
     rho = 28
     beta = 8/3
