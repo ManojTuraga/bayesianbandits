@@ -10,7 +10,9 @@ n = 3  # Dimension of state space
 m = 1  # Dimension of observation space
 N = 10  # Number of ensemble members
 H = np.zeros((m, n)) # Opservation matrix
+H[0, 0] = 1  # Observe x
 H[0, 1] = 1  # Observe y
+H[0, 2] = 1  # Observe z
 
 dt = 0.1  # Time between observations
 J = 10000  # Number of assimilation times
@@ -56,6 +58,8 @@ for j in range(J):
 
     # Analysis
     S = np.dot(np.dot(H, Chat), H.T) + Gamma
+    print( yt[:, j + 1] )
+    print( np.dot(H, Vharr) + alpha * np.random.randn(N) )
     Innov = yt[:, j + 1] - np.dot(H, Vharr) + alpha * np.random.randn(N)
     SinvI = np.linalg.solve(S, Innov)
 
@@ -77,7 +81,7 @@ plt.figure()
 plt.plot(range(1, J + 1), RMSE)
 plt.axhline(alpha, color='g', linestyle='-')
 plt.title('RMSE')
-plt.show()
+plt.savefig( 'rmse.png' )
 
 meanVarr = Vharr
 RMSE = np.mean(RMSE)
