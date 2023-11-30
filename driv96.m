@@ -5,10 +5,20 @@ N=40; %Number of ensemble members
 %H=eye(m,n); %Observation operator: 
 H = zeros(m,n);
 for k=1:m
-H(k,2*(k-1)+1)=1;
+%H(k,2*(k-1)+1)=1;
+%H(k,2*(k-1)+2)=1;
+H(k,k)=1;
 end
 H
 
+localization_radius = 3;
+C_localization = zeros( n );
+
+for i=1:n
+    for j=1:n
+        C_localization( i, j ) = GC( abs( i - j ), localization_radius );
+    end
+end
 
 dt = 0.1 %Time between observations
 J = 1000; %Number of assimilation times
@@ -44,7 +54,7 @@ end
 
 %Main Time Loop
 for j=1:J
-
+j
 %Prediction of Ensembles
 for k=1:N
 Tspan = [(j)*dt,(j+1)*dt];
@@ -67,8 +77,11 @@ Chat = Chat + covvec*covvec';
 end
 Chat = Chat/(N-1);
 
+% Apply the localization
+Chat = C_localization.*Chat;
+
 %Analysis
-S = H*Chat*H'+Gamma;
+S = H*(Chat)*H'+Gamma;
 for k=1:N
 Innov(:,k) = yt(:,j+1)-H*Vharr(:,k)+alpha*randn(1,m)';
 SinvI(:,k) = S\Innov(:,k);
@@ -99,3 +112,16 @@ plot([1:J],alpha*ones(J,1),'g-');
 title('RMSE');
 
 meanVarr = Vharr;RMSE = mean(RMSE)
+
+function gc_val = GC( dist, r )
+    if ( dist >= 0 && dist < 1 )
+        gc_val = 1 - ( ( 5 / 3 ) * dist ^ 2 ) + ( ( 5 / 8 ) * dist ^ 3 ) + ( ( 1 / 2 ) * dist ^ 4 ) - ( ( 1 / 4 ) * dist ^ 5 );
+
+    elseif ( dist >= 1 && dist < r )
+        gc_val = 4 - ( 5 * dist ) + ( ( 5 / 3 ) * dist ^ 2 ) + ( ( 5 / 8 ) * dist ^ 3 ) - ( ( 1 / 2 ) * dist ^ 4 ) - ( ( 1 / 12 ) * dist ^ 5 ) - ( 2 / ( 3 * dist ) );
+    
+    else
+        gc_val = 0;
+    end
+    return
+end

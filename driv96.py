@@ -10,9 +10,8 @@ m=20 #Dimension of observation space
 N=40 #Number of ensemble members
 H = np.zeros((m,n))
 for k in range(m):
-    for j in range(n):
-        if not j % 2:
-            H[k][j]=1
+    if k % 2:
+        H[ k ][ k ]
 
 dt = 0.1 #Time between observations
 J = 1000 #Number of assimilation times
